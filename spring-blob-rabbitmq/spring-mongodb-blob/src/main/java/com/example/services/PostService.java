@@ -11,6 +11,8 @@ import com.example.models.entitys.UserEntity;
 import com.example.rabbitmq.RabbitMQProducer;
 import com.example.repositorys.PostRepository;
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -32,12 +34,13 @@ public class PostService {
     private final CategoryService categoryService;
     private final RabbitMQProducer rabbitMQProducer;
 
-    @Value("${spring.cloud.azure.storage.blob.connection-string")
+    @Value("${spring.cloud.azure.storage.blob.connection-string}")
     private String connectionString;
 
     @Value("${spring.cloud.azure.storage.blob.container-name}")
     private String containerName;
     private BlobServiceClient blobServiceClient;
+    private Logger logger = LoggerFactory.getLogger(PostService.class);
 
     @Autowired
     public PostService(PostRepository postRepository, UserService userService,
@@ -50,6 +53,7 @@ public class PostService {
 
     @PostConstruct
     public void init() {
+        logger.info("Blob connection string : " + connectionString);
         blobServiceClient = new BlobServiceClientBuilder().connectionString(connectionString).buildClient();
     }
 

@@ -4,7 +4,7 @@ services:
     mongo-api:
       container_name: mongo-api
       build:
-        context: ../spring-mongodb-blob
+        context: ./spring-mongodb-blob
         dockerfile: Dockerfile
       environment:
         - API_PORT=5000
@@ -18,8 +18,8 @@ services:
         - MONGO_DB=mydb
         - MONGODB_HOST=mongodb
 
-        - BLOB_URI=
-        - BLOB_CONTAINER_NAME=
+        - BLOB_URI="BlobEndpoint=https://dataincloudlab3.blob.core.windows.net/;QueueEndpoint=https://dataincloudlab3.queue.core.windows.net/;FileEndpoint=https://dataincloudlab3.file.core.windows.net/;TableEndpoint=https://dataincloudlab3.table.core.windows.net/;SharedAccessSignature=sv=2022-11-02&ss=bfqt&srt=o&sp=rwdlacupiytfx&se=2024-06-19T23:56:16Z&st=2024-06-16T15:56:16Z&spr=https&sig=N4yTkhAzNKNZGvZ3YekQDAk7EyqXOC7WZocKyobdTyk%3D"
+        - BLOB_CONTAINER_NAME=blobcontainer
 
         - RABBITMQ_HOST=message_broker
         - RABBITMQ_PORT=5672
@@ -54,7 +54,7 @@ services:
         - default
       container_name: postgres-api
       build:
-        context: ../spring-postgres-blob
+        context: ./spring-postgres-blob
         dockerfile: Dockerfile
       environment:
         - PORT=8080
@@ -66,8 +66,8 @@ services:
         - POSTGRES_DB=postgresdb
         - POSTGRES_URL=jdbc:postgresql://postgresql-db:5432/postgresdb
 
-        - BLOB_URI=
-        - BLOB_CONTAINER_NAME=
+        - BLOB_URI="BlobEndpoint=https://dataincloudlab3.blob.core.windows.net/;QueueEndpoint=https://dataincloudlab3.queue.core.windows.net/;FileEndpoint=https://dataincloudlab3.file.core.windows.net/;TableEndpoint=https://dataincloudlab3.table.core.windows.net/;SharedAccessSignature=sv=2022-11-02&ss=bfqt&srt=o&sp=rwdlacupiytfx&se=2024-06-19T23:56:16Z&st=2024-06-16T15:56:16Z&spr=https&sig=N4yTkhAzNKNZGvZ3YekQDAk7EyqXOC7WZocKyobdTyk%3D"
+        - BLOB_CONTAINER_NAME=blobcontainer
 
         - RABBITMQ_HOST=message_broker
         - RABBITMQ_PORT=5672
@@ -94,7 +94,7 @@ services:
         - default
       container_name: rabbitmq-api
       build:
-        context: ../spring-rabbitmq
+        context: ./spring-rabbitmq
         dockerfile: Dockerfile
       environment:
         - PORT=8080

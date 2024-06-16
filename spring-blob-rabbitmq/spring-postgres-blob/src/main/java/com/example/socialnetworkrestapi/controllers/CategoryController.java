@@ -52,7 +52,7 @@ public class CategoryController {
         }catch (DataIntegrityViolationException e){
             logger.error(e.getMessage());
             return ResponseEntity
-                    .status(HttpStatus.CREATED)
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .headers(httpHeaders)
                     .body("Category with this name " + category.getName() + " is exist.");
         }

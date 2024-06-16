@@ -32,7 +32,7 @@ public class PostService {
     private final CategoryService categoryService;
     private final RabbitMQProducer rabbitMQProducer;
 
-    @Value("${spring.cloud.azure.storage.blob.connection-string")
+    @Value("${spring.cloud.azure.storage.blob.connection-string}")
     private String connectionString;
 
     @Value("${spring.cloud.azure.storage.blob.container-name}")

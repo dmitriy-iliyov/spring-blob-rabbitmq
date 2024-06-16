@@ -3,8 +3,11 @@ package com.example.socialnetworkrestapi.controllers;
 import com.example.socialnetworkrestapi.models.DTO.user.AdminRegistrationDTO;
 import com.example.socialnetworkrestapi.models.DTO.user.AdminResponseDTO;
 import com.example.socialnetworkrestapi.models.DTO.user.UserLogInDTO;
+import com.example.socialnetworkrestapi.services.PostService;
 import com.example.socialnetworkrestapi.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,6 +29,7 @@ public class AdminController {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final Logger logger = LoggerFactory.getLogger(AdminController.class);
 
 
     @GetMapping("/new")
@@ -44,17 +48,18 @@ public class AdminController {
 
         try{
             userService.save(admin, passwordEncoder);
+            logger.info("Admin successfully created.");
             httpHeaders.setLocation(URI.create("/user/login"));
             return ResponseEntity
                     .status(HttpStatus.SEE_OTHER)
                     .headers(httpHeaders)
                     .body("Admin successfully created, redirecting...");
         } catch(DataIntegrityViolationException e){
-            System.out.println("EXCEPTION  " + e.getMessage());
+            logger.error(e.getMessage());
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .headers(httpHeaders)
-                    .body("Admin with name " + admin.getName() + " already exists");
+                    .body("Admin with name " + admin.getName() + " already exists.");
         }
     }
 
@@ -96,16 +101,17 @@ public class AdminController {
 
         try {
             userService.deleteByNameAndPassword(adminName, passwordEncoder.encode(admin.getPassword()));
+            logger.info("Admin with name " + adminName + " has been successfully deleted.");
             return ResponseEntity
                     .status(HttpStatus.NO_CONTENT)
                     .headers(httpHeaders)
-                    .body("Admin with name " + adminName + " has been successfully deleted");
+                    .body("Admin with name " + adminName + " has been successfully deleted.");
         } catch (Exception e) {
-            System.out.println("EXCEPTION  " + e.getMessage());
+            logger.error(e.getMessage());
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .headers(httpHeaders)
-                    .body("Failed to delete admin with name " + adminName);
+                    .body("Failed to delete admin with name " + adminName + ".");
         }
     }
 }

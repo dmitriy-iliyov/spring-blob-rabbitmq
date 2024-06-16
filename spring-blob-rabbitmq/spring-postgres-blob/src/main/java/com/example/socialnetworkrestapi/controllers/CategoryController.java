@@ -4,7 +4,10 @@ package com.example.socialnetworkrestapi.controllers;
 import com.example.socialnetworkrestapi.models.DTO.category.CategoryCreatingDTO;
 import com.example.socialnetworkrestapi.models.DTO.category.CategoryResponseDTO;
 import com.example.socialnetworkrestapi.services.CategoryService;
+import com.example.socialnetworkrestapi.services.PostService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,6 +27,8 @@ import java.util.Optional;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final Logger logger = LoggerFactory.getLogger(CategoryController.class);
+
 
     @GetMapping("/new")
     public String addNewCategoryForm(Model model){
@@ -39,16 +44,17 @@ public class CategoryController {
 
         try {
             categoryService.save(CategoryCreatingDTO.toEntity(category));
+            logger.info("Category " + category.getName() + " successfully created.");
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .headers(httpHeaders)
-                    .body("Category successfully created");
+                    .body("Category successfully created.");
         }catch (DataIntegrityViolationException e){
-            System.out.println("EXCEPTION  " + e.getMessage());
+            logger.error(e.getMessage());
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .headers(httpHeaders)
-                    .body("Category with this name "+ category.getName() +" is exist");
+                    .body("Category with this name " + category.getName() + " is exist.");
         }
     }
 
@@ -98,16 +104,17 @@ public class CategoryController {
 
         try{
             categoryService.deleteById(id);
+            logger.info("Category with id " + id + " has been successfully deleted.");
             return ResponseEntity
                     .status(HttpStatus.NO_CONTENT)
                     .headers(httpHeaders)
-                    .body("Category with id " + id + " has been successfully deleted");
+                    .body("Category with id " + id + " has been successfully deleted.");
         }catch (Exception e){
-            System.out.println("EXCEPTION  " + e.getMessage());
+            logger.error(e.getMessage());
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .headers(httpHeaders)
-                    .body("Failed to delete admin with id " + id);
+                    .body("Failed to delete admin with id " + id + ".");
         }
     }
 }

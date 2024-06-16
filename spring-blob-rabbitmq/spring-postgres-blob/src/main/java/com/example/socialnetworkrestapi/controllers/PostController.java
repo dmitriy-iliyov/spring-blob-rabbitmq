@@ -4,6 +4,8 @@ import com.example.socialnetworkrestapi.models.DTO.post.PostCreatingDTO;
 import com.example.socialnetworkrestapi.models.DTO.post.PostResponseDTO;
 import com.example.socialnetworkrestapi.services.PostService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +26,7 @@ import java.util.Optional;
 public class PostController {
 
     private final PostService postService;
-
+    private final Logger logger = LoggerFactory.getLogger(PostService.class);
 
     @GetMapping("/new")
     @PreAuthorize("hasAuthority('USER')")
@@ -34,23 +37,25 @@ public class PostController {
 
     @PostMapping("/new")
     @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity<String> saveNewPost(@ModelAttribute PostCreatingDTO post) {
+    public ResponseEntity<String> saveNewPost(@RequestParam("image") MultipartFile imageFile,
+                                              @RequestParam("post") PostCreatingDTO post) {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("X-info", "Creating post");
 
         try {
-             postService.save(post);
+             postService.save(post, imageFile);
+             logger.info("Post successfully saved.");
              return ResponseEntity
                      .status(HttpStatus.CREATED)
                      .headers(httpHeaders)
-                     .body("Post successfully created");
-        } catch (ChangeSetPersister.NotFoundException e){
-            System.out.println("EXCEPTION  " + e.getMessage());
+                     .body("Post successfully created.");
+        } catch (Exception e){
+            logger.error(e.getMessage());
             return ResponseEntity
                      .status(HttpStatus.NOT_FOUND)
                      .headers(httpHeaders)
-                     .body("User or category doesn't exist");
+                     .body("User or category doesn't exist.");
         }
     }
 
@@ -108,15 +113,16 @@ public class PostController {
 
         try {
             postService.deleteById(id);
+            logger.info("Post with id " + id + " has been successfully deleted.");
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .headers(httpHeaders)
-                    .body("Post with id " + id + " has been successfully deleted");
+                    .body("Post with id " + id + " has been successfully deleted.");
         } catch (Exception e) {
-            System.out.println("EXCEPTION  " + e.getMessage());
+            logger.error(e.getMessage());
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .headers(httpHeaders)
-                    .body("Failed to delete post with id " + id);
+                    .body("Failed to delete post with id " + id + ".");
         }
     }
 }

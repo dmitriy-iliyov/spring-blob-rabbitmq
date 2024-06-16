@@ -24,7 +24,11 @@ public class PostEntity {
     private String description;
     @Indexed(name = "create_date")
     private Instant createDate;
-    private String userID;
-    private String categoryID;
+    @Indexed(name = "user_id")
+    private String userId;
+    @Indexed(name = "category_id")
+    private String categoryId;
+    @Indexed(name = "image_uri")
+    private String imageURI;
 
 }

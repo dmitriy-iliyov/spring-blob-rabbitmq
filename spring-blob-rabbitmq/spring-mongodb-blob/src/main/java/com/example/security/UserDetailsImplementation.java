@@ -1,6 +1,5 @@
 package com.example.security;
 
-import com.example.models.DTO.post.PostResponseDTO;
 import com.example.models.Role;
 import com.example.models.entitys.UserEntity;
 import lombok.AllArgsConstructor;
@@ -10,10 +9,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 @Data
 @AllArgsConstructor

@@ -11,10 +11,11 @@ public class MessageResponseDTO {
 
     private Long id;
     private String resourceName;
+    private String imageURL;
     private Instant uploadTime;
 
     public static MessageResponseDTO toDTO(MessageEntity messageEntity){
-        return new MessageResponseDTO(messageEntity.getId(),
-                messageEntity.getResourceName(), messageEntity.getUploadTime());
+        return new MessageResponseDTO(messageEntity.getId(), messageEntity.getResourceName(),
+                messageEntity.getImageURL(), messageEntity.getUploadTime());
     }
 }

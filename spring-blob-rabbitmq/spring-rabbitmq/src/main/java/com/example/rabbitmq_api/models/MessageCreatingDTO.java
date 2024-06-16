@@ -8,11 +8,13 @@ import java.time.Instant;
 public class MessageCreatingDTO {
 
     private String resourceName;
+    private String imageURL;
     private Instant uploadTime;
 
     public static MessageEntity toEntity(MessageCreatingDTO messageDTO){
         return MessageEntity.builder()
                 .resourceName(messageDTO.getResourceName())
-                .uploadTime(messageDTO.getUploadTime()).build();
+                .uploadTime(messageDTO.getUploadTime())
+                .imageURL(messageDTO.getImageURL()).build();
     }
 }

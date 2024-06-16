@@ -2,12 +2,14 @@ package com.example.socialnetworkrestapi.models.entitys;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -25,6 +27,9 @@ public class PostEntity {
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "image_url", nullable = false)
+    private String imageURL;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id", nullable = false)
     private UserEntity user;
@@ -32,11 +37,4 @@ public class PostEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="category_id")
     private CategoryEntity category;
-
-    public PostEntity(String topic, String description, UserEntity user, CategoryEntity category){
-        this.topic = topic;
-        this.description = description;
-        this.user = user;
-        this.category = category;
-    }
 }

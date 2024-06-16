@@ -13,13 +13,13 @@ public class PostResponseDTO {
     private Long id;
     private String topic;
     private String description;
-    private Long userID;
-    private Long categoryID;
+    private String imageURL;
+    private Long userId;
+    private Long categoryId;
 
     public static PostResponseDTO toDTO(PostEntity postEntity){
         return new PostResponseDTO(
                 postEntity.getId(), postEntity.getTopic(), postEntity.getDescription(),
-                postEntity.getUser().getId(), postEntity.getCategory().getId()
-        );
+                postEntity.getImageURL(), postEntity.getUser().getId(), postEntity.getCategory().getId());
     }
 }

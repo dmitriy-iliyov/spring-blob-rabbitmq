@@ -26,6 +26,9 @@ public class MessageEntity {
     @Column(name = "resource_name", nullable = false)
     private String resourceName;
 
+    @Column(name = "image_url", nullable = false)
+    private String imageURL;
+
     @Column(name = "upload_time", nullable = false)
     private Instant uploadTime;
 }

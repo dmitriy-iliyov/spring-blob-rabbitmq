@@ -12,10 +12,13 @@ public class PostCreatingDTO {
 
     private String topic;
     private String description;
-    private Long userID;
-    private Long categoryID;
+    private String imageURL;
+    private Long userId;
+    private Long categoryId;
 
     public static PostEntity toEntity(PostCreatingDTO postDTO, UserEntity user, CategoryEntity category){
-        return new PostEntity(postDTO.getTopic(), postDTO.getDescription(), user, category);
+        return PostEntity.builder().topic(postDTO.getTopic())
+                .description(postDTO.getDescription()).user(user)
+                .category(category).build();
     }
 }

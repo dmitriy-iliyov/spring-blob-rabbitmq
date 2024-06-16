@@ -7,10 +7,13 @@ import com.example.socialnetworkrestapi.models.DTO.user.UserResponseDTO;
 import com.example.socialnetworkrestapi.models.Role;
 import com.example.socialnetworkrestapi.models.entitys.UserEntity;
 import com.example.socialnetworkrestapi.security.JwtCore;
+import com.example.socialnetworkrestapi.services.PostService;
 import com.example.socialnetworkrestapi.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -40,6 +43,8 @@ public class UserController {
     private final AuthenticationManager authenticationManager;
     private final JwtCore jwtCore;
     private final PasswordEncoder passwordEncoder;
+    private final Logger logger = LoggerFactory.getLogger(UserController.class);
+
 
     @GetMapping("/new")
     public String registerNewUserForm(Model model){
@@ -52,9 +57,10 @@ public class UserController {
                                          BindingResult bindingResult){
 
         HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("X-Info", "Creating user");
 
         if(bindingResult.hasErrors()){
-            httpHeaders.add("X-Info", "Invalid user data");
+            logger.error("Invalid user data.");
             httpHeaders.setLocation(URI.create("/user/login"));
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -63,19 +69,18 @@ public class UserController {
         }
         try{
             userService.save(user, passwordEncoder);
-            httpHeaders.add("X-Info", "Creating user");
+            logger.info("User successfully created.");
             httpHeaders.setLocation(URI.create("/user/login"));
             return ResponseEntity
                     .status(HttpStatus.SEE_OTHER)
                     .headers(httpHeaders)
                     .body("User successfully created, redirecting...");
         }catch (DataIntegrityViolationException e){
-            httpHeaders.add("X-Info", "Creating user failed");
-            System.out.println("EXCEPTION  " + e.getMessage());
+            logger.error(e.getMessage());
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .headers(httpHeaders)
-                    .body("User with this name already exists");
+                    .body("User with this name already exists.");
         }
     }
 
@@ -97,8 +102,7 @@ public class UserController {
             authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(user.getName(), user.getPassword()));
         } catch (BadCredentialsException e){
-            System.out.println("EXCEPTION  " + e.getMessage());
-            httpHeaders.add("Error-Message", "Incorrect password, " + e.getMessage());
+            logger.error(e.getMessage());
 
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
@@ -123,7 +127,7 @@ public class UserController {
             return "user_edit_form";
         }
         else{
-            System.out.println("EXCEPTION  User not found in database!");
+            logger.error("User not found in database.");
             return "redirect:/user/login";
         }
     }
@@ -135,20 +139,19 @@ public class UserController {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("X-info", "Editing user");
 
-        System.out.println(userResponseDTO);
-
         try {
             userService.update(userResponseDTO, passwordEncoder);
+            logger.info("User successfully edited.");
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .headers(httpHeaders)
-                    .body("Successfully edited");
+                    .body("Successfully edited.");
         } catch (DataIntegrityViolationException e){
-            System.out.println("EXCEPTION  " + e.getMessage());
+            logger.error(e.getMessage());
             return ResponseEntity
-                    .status(HttpStatus.OK)
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .headers(httpHeaders)
-                    .body("failed(");
+                    .body("Editing failed.");
         }
     }
 
@@ -174,12 +177,12 @@ public class UserController {
                 return getResponseEntity(httpHeaders, userService.findEntityById(id));
             }
         } catch (NullPointerException e){
-            System.out.println("EXCEPTION  " + e.getMessage());
+            logger.error(e.getMessage());
         }
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .headers(httpHeaders)
-                .body("NullPointerException, user can't be find");
+                .body("User can't be find.");
     }
 
     private ResponseEntity<?> getResponseEntity(HttpHeaders httpHeaders, Optional<UserEntity> userEntity) {
@@ -227,16 +230,17 @@ public class UserController {
 
         try {
             userService.deleteById(id);
+            logger.info("User with id " + id + " has been successfully deleted.");
             return ResponseEntity
-                    .status(HttpStatus.OK)
+                    .status(HttpStatus.NO_CONTENT)
                     .headers(httpHeaders)
-                    .body("User with id " + id + " has been successfully deleted");
+                    .body("User with id " + id + " has been successfully deleted.");
         } catch (Exception e) {
-            System.out.println("EXCEPTION  " + e.getMessage());
+            logger.error(e.getMessage());
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .headers(httpHeaders)
-                    .body("Failed to delete user with id " + id + ": " + e.getMessage());
+                    .body("Failed to delete user with id " + id + ".");
         }
     }
 }

@@ -8,6 +8,11 @@ import java.time.Instant;
 public class MessageCreatingDTO {
 
     private String resourceName = "spring-postgres-blob";
+    private String imageURL;
     private Instant uploadTime;
 
+    public MessageCreatingDTO(String imageURL, Instant uploadTime){
+        this.imageURL = imageURL;
+        this.uploadTime = uploadTime;
+    }
 }

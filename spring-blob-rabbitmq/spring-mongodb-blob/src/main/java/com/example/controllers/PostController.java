@@ -4,15 +4,14 @@ import com.example.models.DTO.post.PostCreatingDTO;
 import com.example.models.DTO.post.PostResponseDTO;
 import com.example.services.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,12 +35,13 @@ public class PostController {
 
     @PostMapping("/new")
     @PreAuthorize("hasAuthority('USER')")
-    public ResponseEntity<String> saveNewPost(@ModelAttribute PostCreatingDTO post) {
+    public ResponseEntity<String> saveNewPost(@RequestParam("image") MultipartFile imageFile,
+                                              @RequestParam("post") PostCreatingDTO post) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("X-info", "Creating post");
 
         try {
-             postService.save(post);
+             postService.save(post, imageFile);
              return ResponseEntity
                      .status(HttpStatus.CREATED)
                      .headers(httpHeaders)

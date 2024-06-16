@@ -41,15 +41,15 @@ public class PostControllerTest {
     @BeforeAll
     public static void setup(){
         postCreatingDTO = new PostCreatingDTO();
-        postCreatingDTO.setUserID("507f1f77bcf86cd799439011");
-        postCreatingDTO.setCategoryID("507f1f77bcf86cd799439011");
+        postCreatingDTO.setUserId("507f1f77bcf86cd799439011");
+        postCreatingDTO.setCategoryId("507f1f77bcf86cd799439011");
         postCreatingDTO.setTopic("topic");
         postCreatingDTO.setDescription("description");
 
         postResponseDTO = new PostResponseDTO();
         postResponseDTO.setId("507f1f77bcf86cd799439011");
-        postResponseDTO.setUserID("507f1f77bcf86cd799439011");
-        postResponseDTO.setCategoryID("507f1f77bcf86cd799439011");
+        postResponseDTO.setUserId("507f1f77bcf86cd799439011");
+        postResponseDTO.setCategoryId("507f1f77bcf86cd799439011");
         postResponseDTO.setTopic("topic");
         postResponseDTO.setDescription("description");
 
@@ -59,8 +59,8 @@ public class PostControllerTest {
         CategoryEntity categoryEntity = new CategoryEntity();
         categoryEntity.setId("507f1f77bcf86cd799439011");
         postEntity.setId("507f1f77bcf86cd799439011");
-        postEntity.setUserID("507f1f77bcf86cd799439011");
-        postEntity.setCategoryID("507f1f77bcf86cd799439011");
+        postEntity.setUserId("507f1f77bcf86cd799439011");
+        postEntity.setCategoryId("507f1f77bcf86cd799439011");
         postEntity.setTopic("topic");
         postEntity.setDescription("description");
     }

@@ -16,7 +16,6 @@ import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,14 +41,14 @@ public class PostControllerTest {
     @BeforeAll
     public static void setup(){
         postCreatingDTO = new PostCreatingDTO();
-        postCreatingDTO.setUserID(1L);
-        postCreatingDTO.setCategoryID(1L);
+        postCreatingDTO.setUserId(1L);
+        postCreatingDTO.setCategoryId(1L);
         postCreatingDTO.setTopic("topic");
         postCreatingDTO.setDescription("description");
 
         postResponseDTO = new PostResponseDTO();
         postResponseDTO.setId(1L);
-        postResponseDTO.setUserID(1L);
+        postResponseDTO.setUserId(1L);
         postResponseDTO.setCategoryID(1L);
         postResponseDTO.setTopic("topic");
         postResponseDTO.setDescription("description");

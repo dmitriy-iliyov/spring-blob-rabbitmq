@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -35,11 +34,6 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void save(UserEntity userEntity){
         userRepository.save(userEntity);
-    }
-
-    @Transactional
-    public boolean existingByName(String name){
-        return userRepository.existsUserEntityByName(name);
     }
 
     @Transactional

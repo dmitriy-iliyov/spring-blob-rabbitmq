@@ -16,13 +16,15 @@ public class PostResponseDTO {
     private String topic;
     private String description;
     private Instant createDate;
-    private String userID;
-    private String categoryID;
+    private String userId;
+    private String categoryId;
+    private String imageURI;
+
 
     public static PostResponseDTO toDTO(PostEntity postEntity){
         return new PostResponseDTO(
                 postEntity.getId(), postEntity.getTopic(), postEntity.getDescription(),
-                postEntity.getCreateDate(), postEntity.getUserID(), postEntity.getCategoryID()
-        );
+                postEntity.getCreateDate(), postEntity.getUserId(), postEntity.getCategoryId(),
+                postEntity.getImageURI());
     }
 }

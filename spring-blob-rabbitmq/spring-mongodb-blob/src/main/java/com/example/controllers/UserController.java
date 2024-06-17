@@ -139,7 +139,7 @@ public class UserController {
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .headers(httpHeaders)
-                    .body("Successfully edited");
+                    .body("Successfully edited.");
         } catch (Exception e){
             System.out.println("EXCEPTION  " + e.getMessage());
             return ResponseEntity
@@ -176,7 +176,7 @@ public class UserController {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .headers(httpHeaders)
-                .body("NullPointerException, user can't be find");
+                .body("User can't be find.");
     }
 
     private ResponseEntity<?> getResponseEntity(HttpHeaders httpHeaders, Optional<UserEntity> userEntity) {

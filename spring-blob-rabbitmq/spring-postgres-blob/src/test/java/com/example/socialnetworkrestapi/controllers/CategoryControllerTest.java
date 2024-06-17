@@ -4,7 +4,6 @@ import com.example.socialnetworkrestapi.models.DTO.category.CategoryResponseDTO;
 import com.example.socialnetworkrestapi.models.entitys.CategoryEntity;
 import com.example.socialnetworkrestapi.services.CategoryService;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -75,7 +74,7 @@ public class CategoryControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(header().string("X-info", "Creating category"))
-                .andExpect(content().string("Category successfully created"));
+                .andExpect(content().string("Category successfully created."));
 
         verify(categoryService, times(1)).save(any());
     }
@@ -89,9 +88,9 @@ public class CategoryControllerTest {
         mockMvc.perform(post("/category/new")
                         .param("name", "existingCategory"))
                 .andDo(print())
-                .andExpect(status().isCreated())
+                .andExpect(status().isBadRequest())
                 .andExpect(header().string("X-info", "Creating category"))
-                .andExpect(content().string("Category with this name existingCategory is exist"));
+                .andExpect(content().string("Category with name existingCategory is exist."));
 
         verify(categoryService, times(1)).save(any());
     }
@@ -191,7 +190,7 @@ public class CategoryControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent())
                 .andExpect(header().string("X-info", "Deleting category"))
-                .andExpect(content().string("Category with id 1 has been successfully deleted"));
+                .andExpect(content().string("Category with id 1 has been successfully deleted."));
 
         verify(categoryService, times(1)).deleteById(anyLong());
     }
@@ -205,7 +204,7 @@ public class CategoryControllerTest {
                 .andDo(print())
                 .andExpect(status().isInternalServerError())
                 .andExpect(header().string("X-info", "Deleting category"))
-                .andExpect(content().string("Failed to delete admin with id 1"));
+                .andExpect(content().string("Failed to delete admin with id 1."));
 
         verify(categoryService, times(1)).deleteById(anyLong());
     }

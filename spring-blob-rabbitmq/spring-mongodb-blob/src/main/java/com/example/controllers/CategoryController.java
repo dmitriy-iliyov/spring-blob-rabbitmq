@@ -43,13 +43,13 @@ public class CategoryController {
             return ResponseEntity
                     .status(HttpStatus.CREATED)
                     .headers(httpHeaders)
-                    .body("Category with this name " + category.getName() + " successfully created");
+                    .body("Category successfully created.");
         }catch (DataIntegrityViolationException e){
             System.out.println("EXCEPTION  " + e.getMessage());
             return ResponseEntity
-                    .status(HttpStatus.CREATED)
+                    .status(HttpStatus.BAD_REQUEST)
                     .headers(httpHeaders)
-                    .body("Category with this name "+ category.getName() +" is exist");
+                    .body("Category with name "+ category.getName() +" is exist.");
         }
     }
 
@@ -102,13 +102,13 @@ public class CategoryController {
             return ResponseEntity
                     .status(HttpStatus.NO_CONTENT)
                     .headers(httpHeaders)
-                    .body("Category with id " + id + " has been successfully deleted");
+                    .body("Category with id " + id + " has been successfully deleted.");
         }catch (Exception e){
             System.out.println("EXCEPTION  " + e.getMessage());
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .headers(httpHeaders)
-                    .body("Failed to delete admin with id " + id);
+                    .body("Failed to delete admin with id " + id + ".");
         }
     }
 }

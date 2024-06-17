@@ -51,11 +51,11 @@ class UserControllerTest {
         userRegistrationDTO.setPassword("password");
 
         userResponseDTO = new UserResponseDTO();
-        userResponseDTO.setId("507f1f77bcf86cd799439011");
+        userResponseDTO.setId("user_id");
         userResponseDTO.setName("user");
 
         userEntity = new UserEntity();
-        userEntity.setId("507f1f77bcf86cd799439011");
+        userEntity.setId("user_id");
         userEntity.setName("user");
         userEntity.setRole(Role.USER);
     }
@@ -130,7 +130,7 @@ class UserControllerTest {
                         .with(csrf())
                         .flashAttr("user", userResponseDTO))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Successfully edited"));
+                .andExpect(content().string("Successfully edited."));
     }
 
     @Test
@@ -140,7 +140,7 @@ class UserControllerTest {
         mockMvc.perform(get("/user/get"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("NullPointerException, user can't be find"));
+                .andExpect(content().string("User can't be find."));
     }
 
     @Test

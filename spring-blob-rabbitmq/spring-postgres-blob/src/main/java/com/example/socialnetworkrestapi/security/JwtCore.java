@@ -3,6 +3,8 @@ package com.example.socialnetworkrestapi.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,6 +21,7 @@ public class JwtCore {
 
     @Value("${socialnetworkrestapi.app.lifetime}")
     private int lifetime;
+    private final Logger logger = LoggerFactory.getLogger(JwtCore.class);
 
     public String generateToken(Authentication authentication) {
         UserDetailsImplementation userDetails = (UserDetailsImplementation) authentication.getPrincipal();
@@ -48,7 +51,7 @@ public class JwtCore {
             if (jwt != null)
                 return jwt;
         } catch (Exception e){
-            System.out.println("EXCEPTION  " + e.getMessage());
+            logger.error(e.getMessage());
         }
         return null;
     }
@@ -61,7 +64,7 @@ public class JwtCore {
                     .getBody();
             return userData.get("id", Long.class);
         } catch (Exception e){
-            System.out.println("EXCEPTION  " + e.getMessage());
+            logger.error(e.getMessage());
         }
         return null;
     }

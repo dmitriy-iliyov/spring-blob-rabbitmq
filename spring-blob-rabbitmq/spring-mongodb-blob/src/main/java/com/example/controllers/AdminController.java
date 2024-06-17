@@ -98,7 +98,7 @@ public class AdminController {
             return ResponseEntity
                     .status(HttpStatus.NO_CONTENT)
                     .headers(httpHeaders)
-                    .body("Admin with name " + adminName + " has been successfully deleted");
+                    .body("Admin with name " + adminName + " has been successfully deleted.");
         } catch (Exception e) {
             System.out.println("EXCEPTION  " + e.getMessage());
             return ResponseEntity

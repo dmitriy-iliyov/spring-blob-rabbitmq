@@ -4,9 +4,7 @@ import com.example.socialnetworkrestapi.models.DTO.user.UserRegistrationDTO;
 import com.example.socialnetworkrestapi.models.DTO.user.UserResponseDTO;
 import com.example.socialnetworkrestapi.models.Role;
 import com.example.socialnetworkrestapi.models.entitys.UserEntity;
-import com.example.socialnetworkrestapi.security.JwtCore;
 import com.example.socialnetworkrestapi.services.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +25,7 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -74,7 +71,7 @@ class UserControllerTest {
     @Test
     public void saveNewUserSeeOtherTest() throws Exception{
         when(passwordEncoder.encode(any())).thenReturn("encodedPassword");
-        doNothing().when(userService).save(any());
+        doNothing().when(userService).save(any(), any());
 
         mockMvc.perform(post("/user/new")
                 .flashAttr("user", userRegistrationDTO))
@@ -83,20 +80,20 @@ class UserControllerTest {
                 .andExpect(header().string("Location", "/user/login"))
                 .andExpect(content().string("User successfully created, redirecting..."));
 
-        verify(userService, times(1)).save(any());
+        verify(userService, times(1)).save(any(), any());
     }
 
     @Test
     public void saveNewUserBadRequestTest() throws Exception{
         when(passwordEncoder.encode(any())).thenReturn("encodedPassword");
-        doThrow(new DataIntegrityViolationException("User already exists")).when(userService).save(any());
+        doThrow(new DataIntegrityViolationException("User already exists")).when(userService).save(any(), any());
         mockMvc.perform(post("/user/new")
                 .flashAttr("user", userRegistrationDTO))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(header().string("X-Info", "Creating user failed"));
+                .andExpect(header().string("X-Info", "Creating user"));
 
-        verify(userService, times(1)).save(any());
+        verify(userService, times(1)).save(any(), any());
     }
 
     @Test
@@ -130,11 +127,11 @@ class UserControllerTest {
     public void saveEditedUserOkTest() throws Exception {
         when(userService.findDtoById(anyLong())).thenReturn(Optional.of(userResponseDTO));
 
-        mockMvc.perform(post("/user/edit")
+        mockMvc.perform(put("/user/edit")
                         .with(csrf())
                         .flashAttr("user", userResponseDTO))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Successfully edited"));
+                .andExpect(content().string("Successfully edited."));
     }
 
     @Test
@@ -144,7 +141,7 @@ class UserControllerTest {
         mockMvc.perform(get("/user/get"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("NullPointerException, user can't be find"));
+                .andExpect(content().string("User can't be find."));
     }
 
     @Test

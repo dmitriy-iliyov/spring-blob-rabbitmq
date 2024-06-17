@@ -52,9 +52,9 @@ public class CategoryController {
         }catch (DataIntegrityViolationException e){
             logger.error(e.getMessage());
             return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .status(HttpStatus.BAD_REQUEST)
                     .headers(httpHeaders)
-                    .body("Category with this name " + category.getName() + " is exist.");
+                    .body("Category with name " + category.getName() + " is exist.");
         }
     }
 

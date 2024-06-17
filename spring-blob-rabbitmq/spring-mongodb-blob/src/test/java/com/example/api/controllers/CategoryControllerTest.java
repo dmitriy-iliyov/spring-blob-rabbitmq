@@ -36,7 +36,7 @@ public class CategoryControllerTest {
     @BeforeAll
     public static void setUp() {
         categoryResponseDTO = new CategoryResponseDTO();
-        categoryResponseDTO.setId("507f1f77bcf86cd799439011");
+        categoryResponseDTO.setId("id");
         categoryResponseDTO.setName("categoryName");
     }
 
@@ -74,7 +74,7 @@ public class CategoryControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(header().string("X-info", "Creating category"))
-                .andExpect(content().string("Category with this name newCategory successfully created"));
+                .andExpect(content().string("Category successfully created."));
 
         verify(categoryService, times(1)).save(any());
     }
@@ -88,9 +88,9 @@ public class CategoryControllerTest {
         mockMvc.perform(post("/category/new")
                         .param("name", "existingCategory"))
                 .andDo(print())
-                .andExpect(status().isCreated())
+                .andExpect(status().isBadRequest())
                 .andExpect(header().string("X-info", "Creating category"))
-                .andExpect(content().string("Category with this name existingCategory is exist"));
+                .andExpect(content().string("Category with name existingCategory is exist."));
 
         verify(categoryService, times(1)).save(any());
     }
@@ -99,16 +99,16 @@ public class CategoryControllerTest {
     @WithMockUser(authorities = {"ADMIN", "USER"})
     public void getCategoryByIdOrNameOkTest() throws Exception {
         CategoryEntity categoryEntity = new CategoryEntity();
-        categoryEntity.setId("507f1f77bcf86cd799439011");
+        categoryEntity.setId("id");
         categoryEntity.setName("category");
 
         when(categoryService.findById(anyString())).thenReturn(Optional.of(categoryEntity));
 
-        mockMvc.perform(get("/category/get").param("id", "507f1f77bcf86cd799439011"))
+        mockMvc.perform(get("/category/get").param("id", "id"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string("X-info", "Getting category"))
-                .andExpect(jsonPath("$.id").value("507f1f77bcf86cd799439011"))
+                .andExpect(jsonPath("$.id").value("id"))
                 .andExpect(jsonPath("$.name").value("category"));
 
         when(categoryService.findByName(anyString())).thenReturn(Optional.of(categoryEntity));
@@ -117,7 +117,7 @@ public class CategoryControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string("X-info", "Getting category"))
-                .andExpect(jsonPath("$.id").value("507f1f77bcf86cd799439011"))
+                .andExpect(jsonPath("$.id").value("id"))
                 .andExpect(jsonPath("$.name").value("category"));
 
         verify(categoryService, times(1)).findById(anyString());
@@ -130,7 +130,7 @@ public class CategoryControllerTest {
         when(categoryService.findById(anyString())).thenReturn(Optional.empty());
         when(categoryService.findByName(anyString())).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/category/get").param("id", "507f1f77bcf86cd799439011"))
+        mockMvc.perform(get("/category/get").param("id", "id"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(header().string("X-info", "Getting category"));
@@ -162,7 +162,7 @@ public class CategoryControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string("X-info", "Getting all category"))
-                .andExpect(jsonPath("$[0].id").value("507f1f77bcf86cd799439011"))
+                .andExpect(jsonPath("$[0].id").value("id"))
                 .andExpect(jsonPath("$[0].name").value("categoryName"));
 
         verify(categoryService, times(1)).findAll();
@@ -186,11 +186,11 @@ public class CategoryControllerTest {
     public void deleteCategoryNoContentTest() throws Exception {
         doNothing().when(categoryService).deleteById(anyString());
 
-        mockMvc.perform(delete("/category/delete/507f1f77bcf86cd799439011"))
+        mockMvc.perform(delete("/category/delete/1"))
                 .andDo(print())
                 .andExpect(status().isNoContent())
                 .andExpect(header().string("X-info", "Deleting category"))
-                .andExpect(content().string("Category with id 507f1f77bcf86cd799439011 has been successfully deleted"));
+                .andExpect(content().string("Category with id 1 has been successfully deleted."));
 
         verify(categoryService, times(1)).deleteById(anyString());
     }
@@ -204,7 +204,7 @@ public class CategoryControllerTest {
                 .andDo(print())
                 .andExpect(status().isInternalServerError())
                 .andExpect(header().string("X-info", "Deleting category"))
-                .andExpect(content().string("Failed to delete admin with id 1"));
+                .andExpect(content().string("Failed to delete admin with id 1."));
 
         verify(categoryService, times(1)).deleteById(anyString());
     }

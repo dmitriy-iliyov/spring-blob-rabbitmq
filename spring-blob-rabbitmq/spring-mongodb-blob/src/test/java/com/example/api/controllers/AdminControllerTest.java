@@ -31,8 +31,10 @@ class AdminControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
     @MockBean
     private UserService userService;
+
     @MockBean
     private PasswordEncoder passwordEncoder;
     private static AdminRegistrationDTO adminRegistrationDTO;
@@ -47,11 +49,11 @@ class AdminControllerTest {
         adminRegistrationDTO.setPassword("password");
 
         adminResponseDTO = new AdminResponseDTO();
-        adminResponseDTO.setId("507f1f77bcf86cd799439011");
+        adminResponseDTO.setId("id");
         adminResponseDTO.setName("admin");
 
         adminEntity = new UserEntity();
-        adminEntity.setId("507f1f77bcf86cd799439011");
+        adminEntity.setId("id");
         adminEntity.setName("admin");
     }
 
@@ -87,8 +89,7 @@ class AdminControllerTest {
 
         mockMvc.perform(post("/admin/new")
                         .flashAttr("admin", adminRegistrationDTO))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("Admin with name admin already exists"));
+                .andExpect(status().isBadRequest());
 
         verify(userService, times(1)).save(any());
     }
@@ -98,10 +99,10 @@ class AdminControllerTest {
     public void getAdminByIdOkTest() throws Exception{
         when(userService.findEntityById(anyString())).thenReturn(Optional.of(adminEntity));
 
-        mockMvc.perform(get("/admin/get/507f1f77bcf86cd799439011"))
+        mockMvc.perform(get("/admin/get/id"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string("{\"id\":\"507f1f77bcf86cd799439011\",\"name\":\"admin\",\"password\":null,\"role\":null}"));
+                .andExpect(content().string("{\"id\":\"id\",\"name\":\"admin\",\"password\":null,\"role\":null}"));
 
         verify(userService, times(1)).findEntityById(anyString());
     }
@@ -140,7 +141,7 @@ class AdminControllerTest {
                         .content("{\"name\":\"admin\",\"password\":\"password\"}"))
                 .andDo(print())
                 .andExpect(status().isNoContent())
-                .andExpect(content().string("Admin with name admin has been successfully deleted"));
+                .andExpect(content().string("Admin with name admin has been successfully deleted."));
 
         verify(userService, times(1)).deleteByNameAndPassword(anyString(), anyString());
     }

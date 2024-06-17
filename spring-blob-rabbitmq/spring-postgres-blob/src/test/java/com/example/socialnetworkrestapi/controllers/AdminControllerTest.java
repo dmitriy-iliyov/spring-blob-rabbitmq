@@ -15,8 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -33,8 +31,10 @@ class AdminControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
     @MockBean
     private UserService userService;
+
     @MockBean
     private PasswordEncoder passwordEncoder;
     private static AdminRegistrationDTO adminRegistrationDTO;
@@ -69,7 +69,7 @@ class AdminControllerTest {
     @WithMockUser(authorities = "ADMIN")
     public void saveNewAdminSeeOtherTest() throws Exception {
         when(passwordEncoder.encode(any())).thenReturn("encodedPassword");
-        doNothing().when(userService).save(any());
+        doNothing().when(userService).save(any(), any());
 
         mockMvc.perform(post("/admin/new")
                         .flashAttr("admin", adminRegistrationDTO))
@@ -78,20 +78,20 @@ class AdminControllerTest {
                 .andExpect(header().string("Location", "/user/login"))
                 .andExpect(content().string("Admin successfully created, redirecting..."));
 
-        verify(userService, times(1)).save(any());
+        verify(userService, times(1)).save(any(), any());
     }
 
     @Test
     @WithMockUser(authorities = "ADMIN")
     public void saveNewAdminBadRequestTest() throws Exception {
         when(passwordEncoder.encode(any())).thenReturn("encodedPassword");
-        doThrow(new DataIntegrityViolationException("Admin already exists")).when(userService).save(any());
+        doThrow(new DataIntegrityViolationException("Admin already exists")).when(userService).save(any(), any());
 
         mockMvc.perform(post("/admin/new")
                         .flashAttr("admin", adminRegistrationDTO))
                 .andExpect(status().isBadRequest());
 
-        verify(userService, times(1)).save(any());
+        verify(userService, times(1)).save(any(), any());
     }
 
     @Test
@@ -141,7 +141,7 @@ class AdminControllerTest {
                         .content("{\"name\":\"admin\",\"password\":\"password\"}"))
                 .andDo(print())
                 .andExpect(status().isNoContent())
-                .andExpect(content().string("Admin with name admin has been successfully deleted"));
+                .andExpect(content().string("Admin with name admin has been successfully deleted."));
 
         verify(userService, times(1)).deleteByNameAndPassword(anyString(), anyString());
     }

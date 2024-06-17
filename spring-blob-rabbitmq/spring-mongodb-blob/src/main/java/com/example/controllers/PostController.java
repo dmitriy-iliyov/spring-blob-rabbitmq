@@ -126,13 +126,13 @@ public class PostController {
             postService.deleteById(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
                     .headers(httpHeaders)
-                    .body("Post with id " + id + " has been successfully deleted");
+                    .body("Post with id " + id + " has been successfully deleted.");
         } catch (Exception e) {
             System.out.println("EXCEPTION  " + e.getMessage());
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .headers(httpHeaders)
-                    .body("Failed to delete post with id " + id);
+                    .body("Failed to delete post with id " + id + ".");
         }
     }
 }

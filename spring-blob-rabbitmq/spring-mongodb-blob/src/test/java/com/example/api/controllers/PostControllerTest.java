@@ -12,9 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,26 +42,26 @@ public class PostControllerTest {
     @BeforeAll
     public static void setup(){
         postCreatingDTO = new PostCreatingDTO();
-        postCreatingDTO.setUserId("507f1f77bcf86cd799439011");
-        postCreatingDTO.setCategoryId("507f1f77bcf86cd799439011");
+        postCreatingDTO.setUserId("user_id");
+        postCreatingDTO.setCategoryId("category_id");
         postCreatingDTO.setTopic("topic");
         postCreatingDTO.setDescription("description");
 
         postResponseDTO = new PostResponseDTO();
-        postResponseDTO.setId("507f1f77bcf86cd799439011");
-        postResponseDTO.setUserId("507f1f77bcf86cd799439011");
-        postResponseDTO.setCategoryId("507f1f77bcf86cd799439011");
+        postResponseDTO.setId("post_id");
+        postResponseDTO.setUserId("user_id");
+        postResponseDTO.setCategoryId("category_id");
         postResponseDTO.setTopic("topic");
         postResponseDTO.setDescription("description");
 
         postEntity =  new PostEntity();
         UserEntity userEntity = new UserEntity();
-        userEntity.setId("507f1f77bcf86cd799439011");
+        userEntity.setId("user_id");
         CategoryEntity categoryEntity = new CategoryEntity();
-        categoryEntity.setId("507f1f77bcf86cd799439011");
-        postEntity.setId("507f1f77bcf86cd799439011");
-        postEntity.setUserId("507f1f77bcf86cd799439011");
-        postEntity.setCategoryId("507f1f77bcf86cd799439011");
+        categoryEntity.setId("category_id");
+        postEntity.setId("post_id");
+        postEntity.setUserId("user_id");
+        postEntity.setCategoryId("category_id");
         postEntity.setTopic("topic");
         postEntity.setDescription("description");
     }
@@ -92,32 +93,45 @@ public class PostControllerTest {
     @Test
     @WithMockUser(authorities = "USER")
     public void saveNewPostCreatedTest() throws Exception {
-        doNothing().when(postService).save(any());
+        MockMultipartFile imageFile = new MockMultipartFile("image", "image.jpg", "image/jpeg", "image content".getBytes());
+        String topic = "Test Topic";
+        String description = "Test Description";
+        Long userId = 1L;
+        Long categoryId = 1L;
 
-        mockMvc.perform(post("/post/new")
-                        .flashAttr("post", postCreatingDTO))
-                .andDo(print())
+        mockMvc.perform(multipart("/post/new")
+                        .file(imageFile)
+                        .param("topic", topic)
+                        .param("description", description)
+                        .param("user_id", String.valueOf(userId))
+                        .param("category_id", String.valueOf(categoryId)))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("X-info", "Creating post"))
-                .andExpect(content().string("Post successfully created"));
+                .andExpect(content().string("Post successfully created."));
 
-        verify(postService, times(1)).save(any());
+        verify(postService).save(any(PostCreatingDTO.class), any(MultipartFile.class));
     }
 
     @Test
     @WithMockUser(authorities = "USER")
-    public void saveNewPostNotFoundTest() throws Exception {
-        doThrow(new ChangeSetPersister.NotFoundException())
-                .when(postService).save(any());
+    public void saveNewPostInternalServerErrorTest() throws Exception {
+        MockMultipartFile imageFile = new MockMultipartFile("image", "image.jpg", "image/jpeg", "image content".getBytes());
+        String topic = "Test Topic";
+        String description = "Test Description";
+        Long userId = 1L;
+        Long categoryId = 1L;
 
-        mockMvc.perform(post("/post/new")
-                        .flashAttr("post", postCreatingDTO))
-                .andDo(print())
-                .andExpect(status().isNotFound())
+        doThrow(new RuntimeException("Error")).when(postService).save(any(PostCreatingDTO.class), any(MultipartFile.class));
+
+        mockMvc.perform(multipart("/post/new")
+                        .file(imageFile)
+                        .param("topic", topic)
+                        .param("description", description)
+                        .param("user_id", String.valueOf(userId))
+                        .param("category_id", String.valueOf(categoryId)))
+                .andExpect(status().isInternalServerError())
                 .andExpect(header().string("X-info", "Creating post"))
-                .andExpect(content().string("User or category doesn't exist"));
-
-        verify(postService, times(1)).save(any());
+                .andExpect(content().string("Internal server error."));
     }
 
     @Test
@@ -153,12 +167,12 @@ public class PostControllerTest {
         when(postService.findAllByUserIdOrCategoryId(any(), any()))
                 .thenReturn(List.of(postResponseDTO, postResponseDTO));
 
-        mockMvc.perform(get("/post/get").param("userId", "1"))
+        mockMvc.perform(get("/post/get").param("userId", "user_id"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string("X-info", "Getting all post by user or category id or name"));
 
-        mockMvc.perform(get("/post/get").param("categoryId", "1"))
+        mockMvc.perform(get("/post/get").param("categoryId", "category_id"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(header().string("X-info", "Getting all post by user or category id or name"));
@@ -172,12 +186,12 @@ public class PostControllerTest {
         when(postService.findAllByUserIdOrCategoryId(any(), any()))
                 .thenReturn(List.of());
 
-        mockMvc.perform(get("/post/get").param("userId", "1"))
+        mockMvc.perform(get("/post/get").param("userId", "user_id"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(header().string("X-info", "Getting all post by user or category id or name"));
 
-        mockMvc.perform(get("/post/get").param("categoryId", "1"))
+        mockMvc.perform(get("/post/get").param("categoryId", "category_id"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(header().string("X-info", "Getting all post by user or category id or name"));
@@ -220,7 +234,7 @@ public class PostControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent())
                 .andExpect(header().string("X-info", "Deleting post by id"))
-                .andExpect(content().string("Post with id 1 has been successfully deleted"));
+                .andExpect(content().string("Post with id 1 has been successfully deleted."));
 
         verify(postService, times(1)).deleteById(anyString());
         }
@@ -234,7 +248,7 @@ public class PostControllerTest {
                 .andDo(print())
                 .andExpect(status().isInternalServerError())
                 .andExpect(header().string("X-info", "Deleting post by id"))
-                .andExpect(content().string("Failed to delete post with id 1"));
+                .andExpect(content().string("Failed to delete post with id 1."));
 
         verify(postService, times(1)).deleteById(anyString());
     }

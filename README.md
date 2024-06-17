@@ -1,2 +1,2 @@
 # spring-blob-rabbitmq
-postges + mongo rest api in blob storage + rabbitmq
+rest api with -> postgesql, mongodb, azure blob, rabbitmq

@@ -3,10 +3,14 @@ package com.example.socialnetworkrestapi.models.DTO.post;
 import com.example.socialnetworkrestapi.models.entitys.CategoryEntity;
 import com.example.socialnetworkrestapi.models.entitys.PostEntity;
 import com.example.socialnetworkrestapi.models.entitys.UserEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class PostCreatingDTO {
 
@@ -17,8 +21,12 @@ public class PostCreatingDTO {
     private Long categoryId;
 
     public static PostEntity toEntity(PostCreatingDTO postDTO, UserEntity user, CategoryEntity category){
-        return PostEntity.builder().topic(postDTO.getTopic())
-                .description(postDTO.getDescription()).user(user)
-                .category(category).build();
+        return PostEntity.builder()
+                .topic(postDTO.getTopic())
+                .description(postDTO.getDescription())
+                .imageURL(postDTO.getImageURL())
+                .user(user)
+                .category(category)
+                .build();
     }
 }

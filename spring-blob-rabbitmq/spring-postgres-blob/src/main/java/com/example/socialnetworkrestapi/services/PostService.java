@@ -11,6 +11,8 @@ import com.example.socialnetworkrestapi.models.entitys.UserEntity;
 import com.example.socialnetworkrestapi.rabbitmq.RabbitMQProducer;
 import com.example.socialnetworkrestapi.repositorys.PostRepository;
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -39,6 +41,8 @@ public class PostService {
     private String containerName;
     private BlobServiceClient blobServiceClient;
 
+    private Logger logger = LoggerFactory.getLogger(PostService.class);
+
     @Autowired
     public PostService(PostRepository postRepository, UserService userService,
                        CategoryService categoryService, RabbitMQProducer rabbitMQProducer){
@@ -65,11 +69,12 @@ public class PostService {
             String blobFileName = imageFile.getOriginalFilename();
             BlobClient blobClient = blobServiceClient.getBlobContainerClient(containerName).getBlobClient(blobFileName);
             blobClient.upload(imageFile.getInputStream(), imageFile.getSize(), true);
+
             Instant uploadTime = Instant.now();
-
             String imageURL = blobClient.getBlobUrl();
+            logger.info("Image URL : " + imageURL);
             postCreatingDTO.setImageURL(imageURL);
-
+            logger.info("Post creating DTO : " + postCreatingDTO);
             postRepository.save(PostCreatingDTO.toEntity(postCreatingDTO, userEntity, categoryEntity));
 
             rabbitMQProducer.sendMessageToPostgresQueue(new MessageCreatingDTO(imageURL, uploadTime));

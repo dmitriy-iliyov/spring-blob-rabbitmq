@@ -4,6 +4,8 @@ import com.example.models.DTO.post.PostCreatingDTO;
 import com.example.models.DTO.post.PostResponseDTO;
 import com.example.services.PostService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +26,7 @@ import java.util.Optional;
 public class PostController {
 
     private final PostService postService;
+    private final Logger logger = LoggerFactory.getLogger(PostService.class);
 
 
     @GetMapping("/new")
@@ -36,22 +40,36 @@ public class PostController {
     @PostMapping("/new")
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<String> saveNewPost(@RequestParam("image") MultipartFile imageFile,
-                                              @RequestParam("post") PostCreatingDTO post) {
+                                              @RequestParam("topic") String topic,
+                                              @RequestParam("description") String description,
+                                              @RequestParam("user_id") String userId,
+                                              @RequestParam("category_id") String categoryId) {
+
+        PostCreatingDTO post = PostCreatingDTO.builder()
+                                .topic(topic)
+                                .description(description)
+                                .userId(userId)
+                                .categoryId(categoryId)
+                                .build();
+
+        logger.info("Entered post : " + post);
+
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("X-info", "Creating post");
 
         try {
              postService.save(post, imageFile);
+             logger.info("Post successfully saved : " + post);
              return ResponseEntity
                      .status(HttpStatus.CREATED)
                      .headers(httpHeaders)
-                     .body("Post successfully created");
+                     .body("Post successfully created.");
         } catch (Exception e){
-            System.out.println("EXCEPTION  " + e.getMessage());
+            logger.error(e.getMessage());
             return ResponseEntity
-                     .status(HttpStatus.NOT_FOUND)
+                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                      .headers(httpHeaders)
-                     .body("User or category doesn't exist");
+                     .body("Internal server error.");
         }
     }
 

@@ -27,7 +27,7 @@ public class PostEntity {
     @Column(name = "description", nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "image_url", nullable = false)
+    @Column(name = "image_url", nullable = false, columnDefinition = "TEXT")
     private String imageURL;
 
     @ManyToOne(fetch = FetchType.LAZY)

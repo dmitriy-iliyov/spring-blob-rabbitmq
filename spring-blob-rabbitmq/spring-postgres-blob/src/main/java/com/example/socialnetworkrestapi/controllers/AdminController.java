@@ -33,14 +33,14 @@ public class AdminController {
 
 
     @GetMapping("/new")
-    @PreAuthorize("hasAuthority('ADMIN')")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     public String registerNewAdmin(Model model) {
         model.addAttribute("admin", new AdminRegistrationDTO());
         return "admin_register_form";
     }
 
     @PostMapping("/new")
-    @PreAuthorize("hasAuthority('ADMIN')")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> saveNewAdmin(@ModelAttribute("admin") AdminRegistrationDTO admin) {
 
         HttpHeaders httpHeaders = new HttpHeaders();

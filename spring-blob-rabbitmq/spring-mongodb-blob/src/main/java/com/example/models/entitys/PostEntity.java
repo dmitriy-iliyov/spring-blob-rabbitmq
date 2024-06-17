@@ -20,15 +20,21 @@ public class PostEntity {
 
     @Id
     private String id;
+
     private String topic;
+
     private String description;
-    @Indexed(name = "create_date")
-    private Instant createDate;
-    @Indexed(name = "user_id")
-    private String userId;
-    @Indexed(name = "category_id")
-    private String categoryId;
+
     @Indexed(name = "image_uri")
     private String imageURI;
+
+    @Indexed(name = "create_date")
+    private Instant createDate;
+
+    @Indexed(name = "user_id")
+    private String userId;
+
+    @Indexed(name = "category_id")
+    private String categoryId;
 
 }

@@ -15,6 +15,7 @@ public class MessageCreatingDTO {
         return MessageEntity.builder()
                 .resourceName(messageDTO.getResourceName())
                 .uploadTime(messageDTO.getUploadTime())
-                .imageURL(messageDTO.getImageURL()).build();
+                .imageURL(messageDTO.getImageURL())
+                .build();
     }
 }

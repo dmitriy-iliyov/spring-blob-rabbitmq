@@ -69,7 +69,7 @@ public class UserController {
         }
         try{
             userService.save(user, passwordEncoder);
-            logger.info("User successfully created.");
+            logger.info("User successfully created : " + user);
             httpHeaders.setLocation(URI.create("/user/login"));
             return ResponseEntity
                     .status(HttpStatus.SEE_OTHER)

@@ -17,8 +17,10 @@ public class CategoryEntity {
 
     @Id
     private String id;
+
     @Indexed(unique = true)
     private String name;
+
     private List<PostEntity> posts;
 
     public CategoryEntity(String name){

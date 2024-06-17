@@ -61,8 +61,13 @@ public class PostService {
     public void save(PostCreatingDTO postCreatingDTO, MultipartFile imageFile)
             throws IOException, ChangeSetPersister.NotFoundException {
 
+        logger.info("Service entered post : " + postCreatingDTO);
+
         UserEntity userEntity = userService.findEntityById(postCreatingDTO.getUserId()).orElse(null);
         CategoryEntity categoryEntity = categoryService.findById(postCreatingDTO.getCategoryId()).orElse(null);
+
+        logger.info("User entity : " + userEntity);
+        logger.info("Category entity : " + categoryEntity);
 
         if(userEntity != null && categoryEntity != null){
 
@@ -72,7 +77,9 @@ public class PostService {
             Instant uploadTime = Instant.now();
 
             String imageURI = blobClient.getBlobUrl();
+            logger.info("Image URL : " + imageURI);
             postCreatingDTO.setImageURI(imageURI);
+            logger.info("Post creating DTO : " + postCreatingDTO);
 
             postRepository.save(PostCreatingDTO.toEntity(postCreatingDTO));
 

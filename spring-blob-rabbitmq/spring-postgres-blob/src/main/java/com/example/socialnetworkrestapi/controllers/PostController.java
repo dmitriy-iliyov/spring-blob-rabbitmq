@@ -38,14 +38,21 @@ public class PostController {
     @PostMapping("/new")
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<String> saveNewPost(@RequestParam("image") MultipartFile imageFile,
-                                              @RequestParam("post") PostCreatingDTO post) {
+                                              @RequestParam("topic") String topic,
+                                              @RequestParam("description") String description,
+                                              @RequestParam("user_id") Long userId,
+                                              @RequestParam(value = "category_id", required = false) Long categoryId) {
+
+        PostCreatingDTO post = PostCreatingDTO.builder().topic(topic).description(description)
+                                                        .userId(userId).categoryId(categoryId).build();
+        logger.info("Entered post : " + post);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("X-info", "Creating post");
 
         try {
              postService.save(post, imageFile);
-             logger.info("Post successfully saved.");
+             logger.info("Post successfully saved : " + post);
              return ResponseEntity
                      .status(HttpStatus.CREATED)
                      .headers(httpHeaders)
@@ -53,9 +60,9 @@ public class PostController {
         } catch (Exception e){
             logger.error(e.getMessage());
             return ResponseEntity
-                     .status(HttpStatus.NOT_FOUND)
+                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                      .headers(httpHeaders)
-                     .body("User or category doesn't exist.");
+                     .body("Internal server error.");
         }
     }
 

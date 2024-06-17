@@ -20,12 +20,17 @@ public class UserEntity {
 
     @Id
     private String id;
+
     @Indexed(unique = true)
     private String name;
+
     private String password;
+
     @Indexed(unique = true)
     private String email;
+
     @Indexed(name = "create_date")
     private Instant createDate;
+
     private Role role;
 }
